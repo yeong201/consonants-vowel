@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>자모음 · 받침 연습 (다국어 지원)</title>
+<title>자모음 · 받침 연습 (모음 전체 완성판)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&display=swap" rel="stylesheet">
@@ -141,7 +141,6 @@
   .chip[aria-pressed="true"]{
     background:var(--indigo); color:#F3EFE2; border-color:var(--indigo);
   }
-  .chip.reset{margin-left:auto;}
 
   /* ---------- Grid ---------- */
   .grid-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card);}
@@ -157,8 +156,6 @@
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     font-family:var(--display); font-size:20px; color:var(--ink);
   }
-  .cell-btn .rom{ font-family:var(--sans); font-size:10px; color:var(--vermilion); opacity:0; }
-  .cell-btn.revealed .rom{ opacity:1; }
   .cell-btn.revealed .hangul{ color:var(--indigo); }
 
   /* ---------- Cards ---------- */
@@ -211,7 +208,7 @@
 
   /* ---------- Pad ---------- */
   .write-controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px;}
-  select#writeSelect, input#writeCustom{
+  select#writeSelect{
     font-family:var(--sans); font-size:13px; padding:6px 8px; border:1px solid var(--line);
     border-radius:6px; background:var(--card); color:var(--ink);
   }
@@ -236,8 +233,8 @@
   <div class="hero-inner">
     <div class="seal" aria-hidden="true">한</div>
     <div class="hero-text">
-      <h1>자모음 · 받침 연습 (다국어 정답확인)</h1>
-      <p>한국어 발음을 '그, 느, 드' 소리로 정확하게 들으며 배우고, 내 나라 언어(중국어, 네팔어, 몽골어, 스리랑카어, 영어 등)로 뜻을 적어 정답을 확인해보세요!</p>
+      <h1>자모음 · 받침 연습 (모음 전체 완성판)</h1>
+      <p>단모음부터 이중·결합 모음 21개 전체를 '그, 느, 드' 정확한 음성으로 배우고 다국어로 뜻을 확인해 보세요!</p>
     </div>
   </div>
 </header>
@@ -256,10 +253,11 @@
   <!-- TAB 1: Combo -->
   <section class="panel active" id="panel-combo">
     <h2 class="section-title">자음 + 모음 결합표</h2>
-    <p class="section-lede">칸을 눌러 소리를 들어보세요. 자음 단독 소리는 '그, 느, 드, 끄, 뜨'로 정확하게 재생됩니다.</p>
+    <p class="section-lede">버튼을 눌러 확장 모음 및 복합 이중 모음(총 21개)까지 모두 확인해 보세요.</p>
     <div class="toolbar">
-      <button class="chip" id="toggleDouble" aria-pressed="false">쌍자음 보기 (ㄲㄸㅃㅆㅉ)</button>
-      <button class="chip" id="toggleExtra" aria-pressed="false">확장 모음 보기 (ㅐㅔㅑㅕㅛㅠ)</button>
+      <button class="chip" id="toggleDouble" aria-pressed="false">쌍자음 (ㄲㄸㅃㅆㅉ)</button>
+      <button class="chip" id="toggleExtra" aria-pressed="false">확장 모음 (ㅐㅔㅑㅕㅛㅠㅒㅖ)</button>
+      <button class="chip" id="toggleComplex" aria-pressed="false">복합 모음 (ㅘㅙㅚㅝㅞㅟㅢ)</button>
     </div>
     <div class="grid-scroll">
       <table class="combo" id="comboTable"></table>
@@ -268,8 +266,8 @@
 
   <!-- TAB 2: Batchim -->
   <section class="panel" id="panel-batchim">
-    <h2 class="section-title">받침이 있는 단어</h2>
-    <p class="section-lede">단어를 듣고 자기 나라 언어로 뜻을 적은 후 [정답 확인]을 눌러보세요.</p>
+    <h2 class="section-title">대표 받침 단어 학습</h2>
+    <p class="section-lede">받침이 들어간 단어를 듣고 자기 나라 언어로 뜻을 적은 후 [정답 확인]을 눌러보세요.</p>
     <div class="word-grid" id="batchimWords"></div>
   </section>
 
@@ -314,32 +312,47 @@
 (function(){
   "use strict";
 
-  /* --- 한글 자모 및 발음 매핑 --- */
+  /* --- 한글 전체 자음 및 21개 모음 정의 --- */
   var CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
   var JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 
-  // 자음/모음 정확한 한국어 소리 매핑 (기역X -> 그O, 쌍기역X -> 끄O)
+  // 자음/모음 발음 고정 매핑
   var PHONETIC_MAP = {
     'ㄱ':'그', 'ㄴ':'느', 'ㄷ':'드', 'ㄹ':'르', 'ㅁ':'므', 'ㅂ':'브', 'ㅅ':'스',
     'ㅇ':'으', 'ㅈ':'즈', 'ㅊ':'츠', 'ㅋ':'크', 'ㅌ':'트', 'ㅍ':'프', 'ㅎ':'흐',
     'ㄲ':'끄', 'ㄸ':'뜨', 'ㅃ':'쁘', 'ㅆ':'쓰', 'ㅉ':'쯔',
     'ㅏ':'아', 'ㅓ':'어', 'ㅗ':'오', 'ㅜ':'우', 'ㅡ':'으', 'ㅣ':'이',
     'ㅐ':'애', 'ㅔ':'에', 'ㅑ':'야', 'ㅕ':'여', 'ㅛ':'요', 'ㅠ':'유',
-    'ㅘ':'와', 'ㅝ':'워', 'ㅟ':'위', 'ㅢ':'의', 'ㅙ':'왜', 'ㅚ':'외'
+    'ㅒ':'얘', 'ㅖ':'예', 'ㅘ':'와', 'ㅙ':'왜', 'ㅚ':'외',
+    'ㅝ':'워', 'ㅞ':'웨', 'ㅟ':'위', 'ㅢ':'의'
   };
 
-  /* --- 단어 데이터 및 다국어 뜻 데이터베이스 --- */
-  var WORDS = [
-    {kr:'가방', rom:'gabang', emoji:'🎒', meanings:['bag', '包', 'झोला', 'цүнх', 'паအိတ်', 'капова']},
-    {kr:'사과', rom:'sagwa', emoji:'🍎', meanings:['apple', '苹果', 'स्याउ', 'алим', 'ඇපල්', '사과']},
-    {kr:'나비', rom:'nabi', emoji:'🦋', meanings:['butterfly', '蝴蝶', 'पुतली', 'эрвээхэй', 'සමනයා']},
-    {kr:'다리', rom:'dari', emoji:'🌉', meanings:['bridge', 'leg', '桥', '腿', 'पुल', 'гүүр']},
-    {kr:'모자', rom:'moja', emoji:'🧢', meanings:['hat', 'cap', '帽子', 'टोपी', 'малгай']},
-    {kr:'바나나', rom:'banana', emoji:'🍌', meanings:['banana', '香蕉', 'केरा', 'гадил']},
-    {kr:'시계', rom:'sigye', emoji:'🕐', meanings:['clock', 'watch', '钟表', 'घडी', 'цаг']},
-    {kr:'의자', rom:'uija', emoji:'🪑', meanings:['chair', '椅子', 'कुर्सी', 'сандал']},
-    {kr:'우산', rom:'usan', emoji:'☂️', meanings:['umbrella', '雨伞', 'छाता', 'шүхэр']},
-    {kr:'책', rom:'chaek', emoji:'📖', meanings:['book', '书', 'किताब', 'ном']}
+  /* --- 받침 단어 데이터 --- */
+  var BATCHIM_WORDS = [
+    {kr:'책', rom:'chaek', emoji:'📖', meanings:['book', '书', 'किताब', 'ном', 'පොත']},
+    {kr:'눈', rom:'nun', emoji:'❄️', meanings:['snow', 'eye', '雪', '眼睛', 'हिउँ', '눈']},
+    {kr:'옷', rom:'ot', emoji:'👕', meanings:['clothes', 'clothing', '衣服', 'लुगा', 'хувцас']},
+    {kr:'딸기', rom:'ttalgi', emoji:'🍓', meanings:['strawberry', '草莓', 'स्ट्रาबेरी', 'жимсгэнэ']},
+    {kr:'밤', rom:'bam', emoji:'🌙', meanings:['night', 'chestnut', '夜晚', 'राति', 'шөнө']},
+    {kr:'집', rom:'jip', emoji:'🏠', meanings:['house', 'home', '房子', 'घर', 'байшин']},
+    {kr:'공', rom:'gong', emoji:'⚽', meanings:['ball', '球', 'बल', 'бөмбөг']},
+    {kr:'닭', rom:'dak', emoji:'🐔', meanings:['chicken', 'rooster', '鸡', 'कुखुरा', 'тахи아']},
+    {kr:'꽃', rom:'kkot', emoji:'🌸', meanings:['flower', '花', 'फूल', 'цэцэг']},
+    {kr:'밭', rom:'bat', emoji:'🌱', meanings:['field', 'farm', '田地', 'ਖੇਤ', 'खेती']}
+  ];
+
+  /* --- 기초 단어 카드 데이터 --- */
+  var BASIC_WORDS = [
+    {kr:'가방', rom:'gabang', emoji:'🎒', meanings:['bag', '包', 'झोला', 'цүнх']},
+    {kr:'사과', rom:'sagwa', emoji:'🍎', meanings:['apple', '苹果', 'स्याउ', 'алим']},
+    {kr:'나비', rom:'nabi', emoji:'🦋', meanings:['butterfly', '蝴蝶', 'पुतली', 'эрвээхэй']},
+    {kr:'다리', rom:'dari', emoji:'🌉', meanings:['bridge', 'leg', '桥', '腿', 'पुल']},
+    {kr:'모자', rom:'moja', emoji:'🧢', meanings:['hat', 'cap', '帽子', 'टोपी']},
+    {kr:'바나나', rom:'banana', emoji:'🍌', meanings:['banana', '香蕉', 'केरा']},
+    {kr:'시계', rom:'sigye', emoji:'🕐', meanings:['clock', 'watch', '钟表', 'घडी']},
+    {kr:'의자', rom:'uija', emoji:'🪑', meanings:['chair', '椅子', 'कुर्सी']},
+    {kr:'우산', rom:'usan', emoji:'☂️', meanings:['umbrella', '雨伞', 'छाता']},
+    {kr:'책', rom:'chaek', emoji:'📖', meanings:['book', '书', 'किताब']}
   ];
 
   function compose(cho, jung){
@@ -348,20 +361,17 @@
     return String.fromCharCode(0xAC00 + (ci*21 + ji)*28);
   }
 
-  /* --- 개선된 음성 출력 (TTS) 함수 --- */
+  /* --- TTS 함수 --- */
   function speak(text){
     if(!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     
-    // 단독 자음/모음인 경우 정확한 소리로 대체
     var soundText = PHONETIC_MAP[text] || text;
-    
     var u = new SpeechSynthesisUtterance(soundText);
     u.lang = 'ko-KR';
-    u.rate = 0.75; // 파열음 및 이중모음을 또렷하게 전달하기 위해 속도 감속
+    u.rate = 0.75;
     u.pitch = 1.0;
     
-    // 한국어 음성 엔지 선택 보정
     var voices = window.speechSynthesis.getVoices();
     var koVoice = voices.find(function(v){ return v.lang.includes('ko') || v.lang.includes('KO'); });
     if(koVoice) u.voice = koVoice;
@@ -380,16 +390,18 @@
     });
   });
 
-  /* --- TAB 1: 결합표 --- */
+  /* --- TAB 1: 결합표 (모음 확장 지원) --- */
   var BASIC_CONS = ['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
   var DOUBLE_CONS = ['ㄲ','ㄸ','ㅃ','ㅆ','ㅉ'];
   var BASIC_VOWELS = ['ㅏ','ㅓ','ㅗ','ㅜ','ㅡ','ㅣ'];
-  var EXTRA_VOWELS = ['ㅐ','ㅔ','ㅑ','ㅕ','ㅛ','ㅠ'];
-  var showDouble = false, showExtra = false;
+  var EXTRA_VOWELS = ['ㅐ','ㅔ','ㅑ','ㅕ','ㅛ','ㅠ','ㅒ','ㅖ'];
+  var COMPLEX_VOWELS = ['ㅘ','ㅙ','ㅚ','ㅝ','ㅞ','ㅟ','ㅢ'];
+  
+  var showDouble = false, showExtra = false, showComplex = false;
 
   function renderCombo(){
     var cons = BASIC_CONS.concat(showDouble ? DOUBLE_CONS : []);
-    var vowels = BASIC_VOWELS.concat(showExtra ? EXTRA_VOWELS : []);
+    var vowels = BASIC_VOWELS.concat(showExtra ? EXTRA_VOWELS : []).concat(showComplex ? COMPLEX_VOWELS : []);
     var html = '<thead><tr><th></th>';
     vowels.forEach(function(v){ html += '<th>'+v+'</th>'; });
     html += '</tr></thead><tbody>';
@@ -417,12 +429,15 @@
   document.getElementById('toggleExtra').addEventListener('click', function(){
     showExtra = !showExtra; this.setAttribute('aria-pressed', showExtra); renderCombo();
   });
+  document.getElementById('toggleComplex').addEventListener('click', function(){
+    showComplex = !showComplex; this.setAttribute('aria-pressed', showComplex); renderCombo();
+  });
   renderCombo();
 
-  /* --- TAB 2: 받침 단어 및 다국어 정답 검사 --- */
+  /* --- TAB 2: 받침 단어 --- */
   var batchimEl = document.getElementById('batchimWords');
   var bHtml = '';
-  WORDS.forEach(function(w, idx){
+  BATCHIM_WORDS.forEach(function(w, idx){
     bHtml += '<div class="word-card">'+
       '<div class="top-row"><span class="emoji">'+w.emoji+'</span><button class="speak-btn" data-say="'+w.kr+'">🔊</button></div>'+
       '<div class="hangul-big">'+w.kr+'</div>'+
@@ -438,7 +453,7 @@
       var idx = e.target.dataset.idx;
       var val = document.getElementById('bInput'+idx).value.trim().toLowerCase();
       var resEl = document.getElementById('bRes'+idx);
-      var word = WORDS[idx];
+      var word = BATCHIM_WORDS[idx];
       var isCorrect = word.meanings.some(function(m){ return val && m.toLowerCase().includes(val); });
       if(isCorrect){
         resEl.textContent = '⭕ 정답입니다!';
@@ -450,19 +465,19 @@
     }
   });
 
-  /* --- TAB 3: 단어 카드 및 정답 검사 --- */
+  /* --- TAB 3: 단어 카드 --- */
   var cardIdx = 0;
   function renderCard(){
-    var w = WORDS[cardIdx];
+    var w = BASIC_WORDS[cardIdx];
     document.getElementById('cardEmoji').textContent = w.emoji;
     document.getElementById('cardHangul').textContent = w.kr;
     document.getElementById('cardRom').textContent = '['+w.rom+']';
     document.getElementById('cardMeaning').value = '';
     document.getElementById('cardCheckResult').textContent = '';
   }
-  document.getElementById('prevCard').addEventListener('click', function(){ cardIdx = (cardIdx - 1 + WORDS.length) % WORDS.length; renderCard(); });
-  document.getElementById('nextCard').addEventListener('click', function(){ cardIdx = (cardIdx + 1) % WORDS.length; renderCard(); });
-  document.getElementById('speakCard').addEventListener('click', function(){ speak(WORDS[cardIdx].kr); });
+  document.getElementById('prevCard').addEventListener('click', function(){ cardIdx = (cardIdx - 1 + BASIC_WORDS.length) % BASIC_WORDS.length; renderCard(); });
+  document.getElementById('nextCard').addEventListener('click', function(){ cardIdx = (cardIdx + 1) % BASIC_WORDS.length; renderCard(); });
+  document.getElementById('speakCard').addEventListener('click', function(){ speak(BASIC_WORDS[cardIdx].kr); });
   document.getElementById('flashcard').addEventListener('click', function(){
     var rom = document.getElementById('cardRom');
     rom.style.display = rom.style.display === 'none' ? 'block' : 'none';
@@ -470,24 +485,24 @@
   document.getElementById('checkCardMeaningBtn').addEventListener('click', function(){
     var val = document.getElementById('cardMeaning').value.trim().toLowerCase();
     var resEl = document.getElementById('cardCheckResult');
-    var word = WORDS[cardIdx];
+    var word = BASIC_WORDS[cardIdx];
     var isCorrect = word.meanings.some(function(m){ return val && m.toLowerCase().includes(val); });
     if(isCorrect){
-      resEl.textContent = '⭕ 정답입니다! (Correct)';
+      resEl.textContent = '⭕ 정답입니다!';
       resEl.className = 'check-result correct';
     } else {
-      resEl.textContent = '❌ 틀렸습니다. (Try again)';
+      resEl.textContent = '❌ 틀렸습니다.';
       resEl.className = 'check-result incorrect';
     }
   });
   renderCard();
 
-  /* --- TAB 4: 쓰기 연습장 & 자음 '그, 느, 드' 발음 적용 --- */
+  /* --- TAB 4: 쓰기 연습장 (모든 21개 모음 추가) --- */
   var writeSelect = document.getElementById('writeSelect');
   var opts = '<optgroup label="자음">';
   BASIC_CONS.concat(DOUBLE_CONS).forEach(function(c){ opts += '<option value="'+c+'">'+c+' ('+PHONETIC_MAP[c]+')</option>'; });
-  opts += '</optgroup><optgroup label="모음">';
-  BASIC_VOWELS.concat(EXTRA_VOWELS).forEach(function(v){ opts += '<option value="'+v+'">'+v+'</option>'; });
+  opts += '</optgroup><optgroup label="모음 (전체 21개)">';
+  JUNG.forEach(function(v){ opts += '<option value="'+v+'">'+v+' ('+(PHONETIC_MAP[v]||v)+')</option>'; });
   opts += '</optgroup>';
   writeSelect.innerHTML = opts;
 
