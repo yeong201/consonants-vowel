@@ -6,7 +6,8 @@
 <title>자모음 · 받침 연습 (다국어 지원)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<!-- 가독성이 뛰어난 Noto Sans KR 및 Gowun Dodum 적용 -->
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#EFE9DC;
@@ -20,8 +21,7 @@
     --card:#FBF8F1;
     --line: rgba(38,34,32,0.14);
     --radius: 10px;
-    --sans:'Gowun Dodum', sans-serif;
-    --display:'Black Han Sans', sans-serif;
+    --sans:'Noto Sans KR', 'Gowun Dodum', sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -36,7 +36,7 @@
   *{box-sizing:border-box;}
   body{
     margin:0; background:var(--paper); color:var(--ink);
-    font-family:var(--sans); -webkit-tap-highlight-color:transparent;
+    font-family:var(--sans); font-weight: 400; -webkit-tap-highlight-color:transparent;
   }
   .wrap{max-width:920px;margin:0 auto;padding:0 20px 60px;}
 
@@ -65,11 +65,11 @@
   }
   .hero-inner{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
   .seal{
-    width:54px;height:54px;border-radius:50%; background:var(--vermilion); color:#F6E9C9;
-    display:flex;align-items:center;justify-content:center; font-family:var(--display); font-size:22px;
+    width:50px;height:50px;border-radius:50%; background:var(--vermilion); color:#F6E9C9;
+    display:flex;align-items:center;justify-content:center; font-weight:700; font-size:20px;
     box-shadow:0 0 0 3px var(--paper), 0 0 0 4px var(--vermilion-soft); transform:rotate(-6deg);
   }
-  .hero-text h1{ font-family:var(--display); font-weight:400; font-size:clamp(22px,4vw,28px); margin:0 0 4px; color:var(--indigo); }
+  .hero-text h1{ font-weight:700; font-size:clamp(20px,4vw,26px); margin:0 0 4px; color:var(--indigo); }
   .hero-text p{ margin:0; color:var(--ink-soft); font-size:13.5px; line-height:1.4; }
 
   /* Tabs */
@@ -79,14 +79,14 @@
     font-family:var(--sans); font-size:14px; color:var(--ink-soft); background:transparent;
     border:1px solid transparent; padding:8px 14px; border-radius:999px; cursor:pointer; white-space:nowrap;
   }
-  .tab-btn[aria-selected="true"]{ background:var(--indigo); color:#F3EFE2; border-color:var(--indigo); }
+  .tab-btn[aria-selected="true"]{ background:var(--indigo); color:#F3EFE2; border-color:var(--indigo); font-weight:500; }
 
   section.panel{display:none; padding-top:20px;}
   section.panel.active{display:block;}
-  h2.section-title{ font-family:var(--display); font-weight:400; color:var(--indigo); font-size:19px; margin:0 0 6px; }
+  h2.section-title{ font-weight:700; color:var(--indigo); font-size:19px; margin:0 0 6px; }
   p.section-lede{ color:var(--ink-soft); margin:0 0 14px; font-size:13.5px; line-height:1.5; }
 
-  /* Batchim 7 Sound Legend Cards */
+  /* Batchim 7 Legend Cards */
   .batchim-legend-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -98,21 +98,19 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: flex; flex-direction: column; gap: 6px;
   }
   .legend-header { display: flex; justify-content: space-between; align-items: center; }
-  .legend-title { font-family: var(--display); font-size: 18px; color: var(--indigo); }
+  .legend-title { font-weight: 700; font-size: 16px; color: var(--indigo); }
   .sound-btn {
     font-family: var(--sans); font-size: 12px; padding: 4px 8px;
     border: 1px solid var(--line); background: var(--paper-deep); color: var(--indigo);
     border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 4px;
   }
-  .legend-desc { font-size: 12px; color: var(--ink-soft); margin: 0; line-height: 1.4; }
-  .legend-ex { font-size: 13px; color: var(--vermilion); font-weight: bold; }
+  .legend-desc { font-size: 12.5px; color: var(--ink-soft); margin: 0; line-height: 1.4; font-weight: 300; }
+  .legend-ex { font-size: 13px; color: var(--vermilion); font-weight: 500; }
 
-  /* Toolbar & Grid */
+  /* Combo Grid */
   .toolbar{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;}
   .chip{ font-size:12.5px; background:var(--card); border:1px solid var(--line); color:var(--ink-soft); padding:5px 10px; border-radius:999px; cursor:pointer; }
   .chip[aria-pressed="true"]{ background:var(--indigo); color:#F3EFE2; border-color:var(--indigo); }
@@ -120,25 +118,49 @@
   .grid-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card);}
   table.combo{border-collapse:collapse; width:100%; min-width:480px;}
   table.combo th, table.combo td{border:1px solid var(--line); text-align:center; padding:0;}
-  table.combo thead th, table.combo tbody th{ font-size:12px; padding:6px 4px; background:var(--paper-deep); color:var(--ink-soft); }
-  .cell-btn{ width:100%; height:52px; border:none; background:transparent; cursor:pointer; font-family:var(--display); font-size:18px; color:var(--ink); }
+  table.combo thead th, table.combo tbody th{ font-size:13px; font-weight:400; padding:6px 4px; background:var(--paper-deep); color:var(--ink-soft); }
+  .cell-btn{ width:100%; height:48px; border:none; background:transparent; cursor:pointer; font-family:var(--sans); font-weight:400; font-size:17px; color:var(--ink); }
 
-  /* Word Cards & Flashcards */
+  /* TAB 2 Word Grid */
   .word-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px;}
-  .word-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:10px; display:flex; flex-direction:column; gap:4px; }
+  .word-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:12px; display:flex; flex-direction:column; gap:6px; }
   .word-card .top-row{display:flex; align-items:center; justify-content:space-between;}
-  .word-card .hangul-big{font-family:var(--display); font-size:20px;}
-  .speak-btn{ border:1px solid var(--line); background:var(--paper-deep); color:var(--indigo); border-radius:6px; width:28px; height:28px; cursor:pointer; }
-  .word-card input.meaning{ font-size:12px; padding:5px; border:1px solid var(--line); border-radius:4px; background:var(--paper); width:100%; }
-  .check-btn{ font-size:11px; padding:4px; background:var(--indigo); color:#fff; border:none; border-radius:4px; cursor:pointer; }
-  .check-result{font-size:11px; font-weight:bold;}
-  .check-result.correct{color:green;} .check-result.incorrect{color:var(--vermilion);}
+  .word-card .hangul-big{font-weight:500; font-size:22px;}
+  .speak-btn{ border:1px solid var(--line); background:var(--paper-deep); color:var(--indigo); border-radius:6px; width:30px; height:30px; cursor:pointer; }
 
-  /* Pad */
-  .pad-wrap{ border:1px solid var(--line); border-radius:var(--radius); background:var(--card); padding:12px; display:flex; flex-direction:column; align-items:center; gap:10px; }
-  canvas#pad{ touch-action:none; width:100%; max-width:360px; aspect-ratio:1/1; background:var(--paper); border-radius:8px; border:1px dashed var(--line); }
-  .btn{ font-size:13px; padding:6px 12px; border-radius:6px; border:1px solid var(--line); background:var(--paper-deep); cursor:pointer; }
-  .btn.primary{background:var(--indigo); border-color:var(--indigo); color:#F3EFE2;}
+  /* TAB 3 Flashcard Stage */
+  .deck-bar{ display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+  .deck-count{ margin-left:auto; font-size:13px; color:var(--ink-soft); }
+  .flashcard-stage{ display:flex; flex-direction:column; align-items:center; gap:14px; max-width:400px; margin:0 auto; }
+  .flashcard{
+    width:100%; height:230px; background:var(--card); border:1px solid var(--line);
+    border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:20px; text-align:center; cursor:pointer; position:relative; box-shadow:0 4px 12px rgba(0,0,0,0.03);
+  }
+  .emoji-lg{ font-size:42px; margin-bottom:6px; }
+  .hangul-xl{ font-size:36px; font-weight:500; color:var(--ink); margin-bottom:4px; }
+  .rom-reveal{ font-size:16px; color:var(--indigo); font-weight:500; }
+  .badge-row{ margin-top:6px; }
+  .badge{ font-size:11px; padding:2px 6px; border-radius:4px; background:var(--paper-deep); color:var(--ink-soft); }
+  .hint{ position:absolute; bottom:10px; font-size:11px; color:var(--ink-soft); opacity:0.7; }
+
+  .card-controls{ display:flex; gap:16px; align-items:center; }
+  .round-btn{ width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--indigo); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .meaning-row{ width:100%; display:flex; flex-direction:column; gap:4px; font-size:13px; color:var(--ink-soft); }
+  .meaning-row input{ padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--card); font-family:var(--sans); font-size:14px; color:var(--ink); }
+  .learned-toggle{ font-size:13px; color:var(--ink-soft); cursor:pointer; display:flex; align-items:center; gap:6px; }
+  .to-writing-btn{ background:transparent; border:none; color:var(--indigo); font-size:13px; text-decoration:underline; cursor:pointer; margin-top:4px; }
+
+  /* TAB 4 Pad & Controls */
+  .write-controls{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center; }
+  .write-controls select, .write-controls input{ padding:6px 10px; border:1px solid var(--line); border-radius:6px; background:var(--card); font-family:var(--sans); font-size:13.5px; }
+  .pad-wrap{ border:1px solid var(--line); border-radius:var(--radius); background:var(--card); padding:16px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+  canvas#pad{ touch-action:none; width:100%; max-width:480px; aspect-ratio:1/1; background:var(--paper); border-radius:8px; border:1px dashed var(--line); }
+  .pad-tools{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .swatch{ width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer; }
+  .swatch[aria-pressed="true"]{ border-color:var(--indigo); }
+  .btn{ font-size:13px; padding:6px 12px; border-radius:6px; border:1px solid var(--line); background:var(--paper-deep); cursor:pointer; font-family:var(--sans); }
+  .btn.primary{ background:var(--indigo); border-color:var(--indigo); color:#F3EFE2; }
 </style>
 
 <!-- 구글 번역 스크립트 -->
@@ -156,7 +178,6 @@ function googleTranslateElementInit() {
 </head>
 <body>
 
-<!-- 언어 선택 바 -->
 <div class="top-bar">
   <div id="google_translate_element"></div>
 </div>
@@ -185,7 +206,7 @@ function googleTranslateElementInit() {
   <!-- TAB 1: Combo -->
   <section class="panel active" id="panel-combo">
     <h2 class="section-title">자음 + 모음 결합표</h2>
-    <p class="section-lede">칸을 눌러 소리를 들어보세요.</p>
+    <p class="section-lede">칸을 눌러 정확한 소리를 들어보세요.</p>
     <div class="toolbar">
       <button class="chip" id="toggleDouble" aria-pressed="false">쌍자음 (ㄲㄸㅃㅆㅉ)</button>
       <button class="chip" id="toggleExtra" aria-pressed="false">확장 모음 (ㅐㅔㅑㅕㅛㅠㅒㅖ)</button>
@@ -201,134 +222,185 @@ function googleTranslateElementInit() {
     <h2 class="section-title">받침 (Final Consonants)</h2>
     <p class="section-lede">한국어 받침은 19개 자음 중 3개(ㄸ, ㅃ, ㅉ)를 뺀 나머지가 쓰이지만, 소리는 아래 7가지 대표음으로만 납니다.</p>
 
-    <!-- 7개 대표 받침 카데고리 & 소리 듣기 -->
     <div class="batchim-legend-grid">
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">1. ㄱ 받침 [ㄱ, ㅋ, ㄲ]</span>
-          <button class="sound-btn" onclick="speak('악')">🔊 받침 소리 (악)</button>
+          <button class="sound-btn" onclick="speak('악')">🔊 대표 소리 (악)</button>
         </div>
         <p class="legend-desc">혀뿌리로 목구멍을 막으면서 소리를 끝냅니다.</p>
-        <div class="legend-ex">예시: 책 [책], 밖 [박], 부엌 [부억]</div>
+        <div class="legend-ex">예시: 책, 밖, 부엌</div>
       </div>
 
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">2. ㄴ 받침 [ㄴ]</span>
-          <button class="sound-btn" onclick="speak('안')">🔊 받침 소리 (안)</button>
+          <button class="sound-btn" onclick="speak('안')">🔊 대표 소리 (안)</button>
         </div>
         <p class="legend-desc">혀끝을 윗잇몸에 대면서 소리를 끝냅니다.</p>
-        <div class="legend-ex">예시: 눈 [눈], 안 [안], 손 [손]</div>
+        <div class="legend-ex">예시: 눈, 안, 손</div>
       </div>
 
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">3. ㄷ 받침 [ㄷ, ㅅ, ㅈ, ㅊ, ㅌ, ㅎ, ㅆ]</span>
-          <button class="sound-btn" onclick="speak('앗')">🔊 받침 소리 (앋/앗)</button>
+          <button class="sound-btn" onclick="speak('앋')">🔊 대표 소리 (앋)</button>
         </div>
         <p class="legend-desc">혀끝을 윗잇몸에 대고 바람을 멈춥니다.</p>
-        <div class="legend-ex">예시: 옷 [오댣/옷], 낮 [낟], 꽃 [꼼]</div>
+        <div class="legend-ex">예시: 옷, 낮, 꽃, 밭</div>
       </div>
 
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">4. ㄹ 받침 [ㄹ]</span>
-          <button class="sound-btn" onclick="speak('알')">🔊 받침 소리 (알)</button>
+          <button class="sound-btn" onclick="speak('알')">🔊 대표 소리 (알)</button>
         </div>
         <p class="legend-desc">혀끝을 입천장에 구부려 대면서 소리를 냅니다.</p>
-        <div class="legend-ex">예시: 달 [달], 딸기 [딸기], 물 [물]</div>
+        <div class="legend-ex">예시: 달, 딸기, 물</div>
       </div>
 
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">5. ㅁ 받침 [ㅁ]</span>
-          <button class="sound-btn" onclick="speak('암')">🔊 받침 소리 (암)</button>
+          <button class="sound-btn" onclick="speak('암')">🔊 대표 소리 (암)</button>
         </div>
         <p class="legend-desc">두 입술을 다물면서 코로 소리를 냅니다.</p>
-        <div class="legend-ex">예시: 밤 [밤], 몸 [몸], 힘 [힘]</div>
+        <div class="legend-ex">예시: 밤, 몸, 힘</div>
       </div>
 
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">6. ㅂ 받침 [ㅂ, ㅍ]</span>
-          <button class="sound-btn" onclick="speak('압')">🔊 받침 소리 (압)</button>
+          <button class="sound-btn" onclick="speak('압')">🔊 대표 소리 (압)</button>
         </div>
         <p class="legend-desc">두 입술을 닫아 공기를 멈춥니다.</p>
-        <div class="legend-ex">예시: 집 [집], 잎 [입], 밥 [밥]</div>
+        <div class="legend-ex">예시: 집, 잎, 밥</div>
       </div>
 
       <div class="legend-card">
         <div class="legend-header">
           <span class="legend-title">7. ㅇ 받침 [ㅇ]</span>
-          <button class="sound-btn" onclick="speak('앙')">🔊 받침 소리 (앙)</button>
+          <button class="sound-btn" onclick="speak('앙')">🔊 대표 소리 (앙)</button>
         </div>
         <p class="legend-desc">입을 벌린 채 목구멍 울림으로 코소리를 냅니다.</p>
-        <div class="legend-ex">예시: 공 [공], 강 [강], 방 [방]</div>
+        <div class="legend-ex">예시: 공, 강, 방</div>
       </div>
     </div>
 
-    <h2 class="section-title" style="margin-top:16px;">받침이 있는 단어</h2>
-    <p class="section-lede">단어를 듣고 뜻을 자기 나라 언어로 적은 후 정답을 확인해보세요.</p>
+    <h2 class="section-title" style="margin-top:16px;">받침이 있는 단어 목록</h2>
+    <p class="section-lede">단어를 눌러 소리를 들어보고 뜻을 직접 적어보세요.</p>
     <div class="word-grid" id="batchimWords"></div>
   </section>
 
   <!-- TAB 3: Flashcards -->
   <section class="panel" id="panel-cards">
     <h2 class="section-title">기초 단어 카드</h2>
-    <div class="word-grid" id="basicWords"></div>
+    <p class="section-lede">카드를 눌러서 로마자 표기를 확인하세요. 뜻은 여러분 나라 말로 직접 써 보세요.</p>
+    
+    <div class="deck-bar">
+      <button class="chip deck-filter" data-filter="all" aria-pressed="true">전체</button>
+      <button class="chip deck-filter" data-filter="none" aria-pressed="false">받침 없는 단어</button>
+      <button class="chip deck-filter" data-filter="has" aria-pressed="false">받침 있는 단어</button>
+      <span class="deck-count" id="deckCount">0 / 0</span>
+    </div>
+
+    <div class="flashcard-stage">
+      <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="카드를 눌러 로마자 표기 보기">
+        <div class="emoji-lg" id="cardEmoji">📖</div>
+        <div class="hangul-xl" id="cardHangul">책</div>
+        <div class="rom-reveal" id="cardRom" style="display:none;">chaek</div>
+        <div class="badge-row" id="cardBadge"><span class="badge">받침 있음 [ㄱ]</span></div>
+        <div class="hint" id="cardHint">눌러서 로마자 표기 보기</div>
+      </div>
+
+      <div class="card-controls">
+        <button class="round-btn" id="prevCard" aria-label="이전 카드">‹</button>
+        <button class="round-btn" id="speakCard" aria-label="발음 듣기">🔊</button>
+        <button class="round-btn" id="nextCard" aria-label="다음 카드">›</button>
+      </div>
+
+      <div class="meaning-row">
+        <label for="cardMeaning">뜻 (내 나라 말로 써 보세요)</label>
+        <input id="cardMeaning" type="text" placeholder="예: book, 书, 동등한 의미 입력">
+      </div>
+
+      <label class="learned-toggle">
+        <input type="checkbox" id="cardLearned"> 이 단어 외웠어요
+      </label>
+
+      <button class="to-writing-btn" id="toWriting">이 단어로 쓰기 연습하기 →</button>
+    </div>
   </section>
 
   <!-- TAB 4: Writing -->
   <section class="panel" id="panel-write">
     <h2 class="section-title">쓰기 연습장</h2>
-    <div style="display:flex; gap:8px; margin-bottom:12px;">
+    <p class="section-lede">글자나 단어를 골라 흐린 글씨를 따라 써 보세요. 손가락이나 마우스로 그릴 수 있어요.</p>
+
+    <div class="write-controls">
       <select id="writeSelect"></select>
-      <button class="btn" id="speakWrite">🔊 소리 듣기</button>
+      <input id="writeCustom" type="text" placeholder="직접 입력..." maxlength="6">
+      <button class="btn" id="writeCustomBtn">이 글자 쓰기</button>
+      <button class="btn" id="speakWrite">🔊 듣기</button>
     </div>
+
     <div class="pad-wrap">
-      <canvas id="pad"></canvas>
-      <button class="btn primary" id="clearPad">지우기</button>
+      <canvas id="pad" width="600" height="600"></canvas>
+      <div class="pad-tools">
+        <button class="swatch" data-color="#262220" style="background:#262220;" aria-pressed="true" aria-label="검정"></button>
+        <button class="swatch" data-color="#B23A2E" style="background:#B23A2E;" aria-label="빨강"></button>
+        <button class="swatch" data-color="#29496B" style="background:#29496B;" aria-label="파랑"></button>
+        <input type="range" id="penSize" min="3" max="18" value="7" aria-label="펜 굵기">
+        <button class="btn" id="toggleGuide">안내선 숨기기</button>
+        <button class="btn primary" id="clearPad">지우기</button>
+      </div>
     </div>
   </section>
 
 </main>
 
 <script>
-/* --- 한글 자모 및 발음 매핑 --- */
-var CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-var JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-
+/* --- 음성 합성 및 발음 교정 (TTS) --- */
 var PHONETIC_MAP = {
   'ㄱ':'그', 'ㄴ':'느', 'ㄷ':'드', 'ㄹ':'르', 'ㅁ':'므', 'ㅂ':'브', 'ㅅ':'스',
-  'ㅇ':'으', 'ㅈ':'즈', 'ㅊ':'츠', 'ㅋ':'크', 'ㅌ':'트', 'ㅍ':'프', 'ㅎ':'흐',
+  'ㅇ':'응', 'ㅈ':'즈', 'ㅊ':'츠', 'ㅋ':'크', 'ㅌ':'트', 'ㅍ':'프', 'ㅎ':'흐',
   'ㄲ':'끄', 'ㄸ':'뜨', 'ㅃ':'쁘', 'ㅆ':'쓰', 'ㅉ':'쯔',
   'ㅏ':'아', 'ㅓ':'어', 'ㅗ':'오', 'ㅜ':'우', 'ㅡ':'으', 'ㅣ':'이',
   'ㅐ':'애', 'ㅔ':'에', 'ㅑ':'야', 'ㅕ':'여', 'ㅛ':'요', 'ㅠ':'유',
   'ㅒ':'얘', 'ㅖ':'예', 'ㅘ':'와', 'ㅙ':'왜', 'ㅚ':'외', 'ㅝ':'워', 'ㅞ':'웨', 'ㅟ':'위', 'ㅢ':'의'
 };
 
-var BATCHIM_WORDS = [
-  {kr:'책', emoji:'📖', meanings:['book', '书', 'किताब', 'ном', 'پොත']},
-  {kr:'눈', emoji:'❄️', meanings:['snow', 'eye', '雪', '眼睛', 'हिउँ']},
-  {kr:'옷', emoji:'👕', meanings:['clothes', '衣服', 'लुगा']},
-  {kr:'딸기', emoji:'🍓', meanings:['strawberry', '草莓']},
-  {kr:'밤', emoji:'🌙', meanings:['night', '夜晚']},
-  {kr:'집', emoji:'🏠', meanings:['house', '房子', 'घर']},
-  {kr:'공', emoji:'⚽', meanings:['ball', '球']},
-  {kr:'닭', emoji:'🐔', meanings:['chicken', '鸡']},
-  {kr:'꽃', emoji:'🌸', meanings:['flower', '花']},
-  {kr:'밭', emoji:'🌱', meanings:['field', '田地']}
-];
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  var soundText = PHONETIC_MAP[text] || text;
+  var u = new SpeechSynthesisUtterance(soundText);
+  u.lang = 'ko-KR';
+  u.rate = 0.65; // 또박또박 전달되도록 발음 속도를 0.65로 하향 조절
+  u.pitch = 1.0;
+  window.speechSynthesis.speak(u);
+}
 
-var BASIC_WORDS = [
-  {kr:'가방', emoji:'🎒', meanings:['bag', '包']},
-  {kr:'사과', emoji:'🍎', meanings:['apple', '苹果']},
-  {kr:'나비', emoji:'🦋', meanings:['butterfly', '蝴蝶']},
-  {kr:'다리', emoji:'🌉', meanings:['bridge', '桥']},
-  {kr:'모자', emoji:'🧢', meanings:['hat', '帽子']},
-  {kr:'시계', emoji:'🕐', meanings:['clock', '钟表']},
-  {kr:'의자', emoji:'🪑', meanings:['chair', '椅子']},
-  {kr:'우산', emoji:'☂️', meanings:['umbrella', '雨伞']}
+/* --- 데이터 세트 --- */
+var CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+var JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+
+var CARD_DECK = [
+  {kr:'책', rom:'chaek', emoji:'📖', hasBatchim:true, batchimGroup:'ㄱ'},
+  {kr:'눈', rom:'nun', emoji:'❄️', hasBatchim:true, batchimGroup:'ㄴ'},
+  {kr:'옷', rom:'ot', emoji:'👕', hasBatchim:true, batchimGroup:'ㄷ'},
+  {kr:'딸기', rom:'ttal-gi', emoji:'🍓', hasBatchim:true, batchimGroup:'ㄹ'},
+  {kr:'밤', rom:'bam', emoji:'🌙', hasBatchim:true, batchimGroup:'ㅁ'},
+  {kr:'집', rom:'jip', emoji:'🏠', hasBatchim:true, batchimGroup:'ㅂ'},
+  {kr:'공', rom:'gong', emoji:'⚽', hasBatchim:true, batchimGroup:'ㅇ'},
+  {kr:'가방', rom:'ga-bang', emoji:'🎒', hasBatchim:true, batchimGroup:'ㅇ'},
+  {kr:'사과', rom:'sa-gwa', emoji:'🍎', hasBatchim:false},
+  {kr:'나비', rom:'na-bi', emoji:'🦋', hasBatchim:false},
+  {kr:'다리', rom:'da-ri', emoji:'🌉', hasBatchim:false},
+  {kr:'모자', rom:'mo-ja', emoji:'🧢', hasBatchim:false},
+  {kr:'시계', rom:'si-gye', emoji:'🕐', hasBatchim:false},
+  {kr:'의자', rom:'ui-ja', emoji:'🪑', hasBatchim:false},
+  {kr:'우산', rom:'u-san', emoji:'☂️', hasBatchim:true, batchimGroup:'ㄴ'}
 ];
 
 function compose(cho, jung){
@@ -337,18 +409,15 @@ function compose(cho, jung){
   return String.fromCharCode(0xAC00 + (ci*21 + ji)*28);
 }
 
-function speak(text){
-  if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  var soundText = PHONETIC_MAP[text] || text;
-  var u = new SpeechSynthesisUtterance(soundText);
-  u.lang = 'ko-KR'; u.rate = 0.75;
-  window.speechSynthesis.speak(u);
-}
-
 /* 탭 전환 */
 var tabButtons = document.querySelectorAll('.tab-btn');
-var panels = { combo:document.getElementById('panel-combo'), batchim:document.getElementById('panel-batchim'), cards:document.getElementById('panel-cards'), write:document.getElementById('panel-write') };
+var panels = { 
+  combo:document.getElementById('panel-combo'), 
+  batchim:document.getElementById('panel-batchim'), 
+  cards:document.getElementById('panel-cards'), 
+  write:document.getElementById('panel-write') 
+};
+
 tabButtons.forEach(function(b){
   b.addEventListener('click', function(){
     tabButtons.forEach(function(btn){ btn.setAttribute('aria-selected', 'false'); });
@@ -387,49 +456,214 @@ document.getElementById('toggleExtra').onclick = function(){ showExtra = !showEx
 document.getElementById('toggleComplex').onclick = function(){ showComplex = !showComplex; this.setAttribute('aria-pressed', showComplex); renderCombo(); };
 renderCombo();
 
-/* TAB 2 & 3: 단어 목록 카드 렌더링 */
-function renderWords(targetId, wordList){
+/* TAB 2: 받침 단어 목록 */
+function renderBatchimList(){
+  var batchimWords = CARD_DECK.filter(function(w){ return w.hasBatchim; });
   var html = '';
-  wordList.forEach(function(w, idx){
+  batchimWords.forEach(function(w){
     html += '<div class="word-card">'+
       '<div class="top-row"><span>'+w.emoji+'</span><button class="speak-btn" onclick="speak(\''+w.kr+'\')">🔊</button></div>'+
       '<div class="hangul-big">'+w.kr+'</div>'+
-      '<input class="meaning" id="'+targetId+'Inp'+idx+'" placeholder="뜻 입력">'+
-      '<button class="check-btn" onclick="checkMeaning(\''+targetId+'\', '+idx+')">정답 확인</button>'+
-      '<div class="check-result" id="'+targetId+'Res'+idx+'"></div>'+
+      '<div style="font-size:12px; color:var(--indigo);">'+w.rom+'</div>'+
     '</div>';
   });
-  document.getElementById(targetId).innerHTML = html;
+  document.getElementById('batchimWords').innerHTML = html;
 }
-renderWords('batchimWords', BATCHIM_WORDS);
-renderWords('basicWords', BASIC_WORDS);
+renderBatchimList();
 
-window.checkMeaning = function(targetId, idx){
-  var list = targetId === 'batchimWords' ? BATCHIM_WORDS : BASIC_WORDS;
-  var val = document.getElementById(targetId+'Inp'+idx).value.trim().toLowerCase();
-  var resEl = document.getElementById(targetId+'Res'+idx);
-  var isCorrect = list[idx].meanings.some(function(m){ return val && m.toLowerCase().includes(val); });
-  if(isCorrect){ resEl.textContent = '⭕ 정답!'; resEl.className = 'check-result correct'; }
-  else { resEl.textContent = '❌ 다시 시도'; resEl.className = 'check-result incorrect'; }
+/* TAB 3: 플래시 카드 제어 */
+var currentFilter = 'all';
+var filteredDeck = CARD_DECK.slice();
+var cardIndex = 0;
+var userMeanings = {};
+var learnedSet = new Set();
+
+function updateDeck(){
+  if(currentFilter === 'all') filteredDeck = CARD_DECK.slice();
+  else if(currentFilter === 'none') filteredDeck = CARD_DECK.filter(function(d){ return !d.hasBatchim; });
+  else if(currentFilter === 'has') filteredDeck = CARD_DECK.filter(function(d){ return d.hasBatchim; });
+  cardIndex = 0;
+  renderCard();
+}
+
+function renderCard(){
+  var countEl = document.getElementById('deckCount');
+  if(filteredDeck.length === 0){
+    countEl.textContent = '0 / 0';
+    document.getElementById('cardHangul').textContent = '없음';
+    return;
+  }
+  countEl.textContent = (cardIndex + 1) + ' / ' + filteredDeck.length;
+  var item = filteredDeck[cardIndex];
+  document.getElementById('cardEmoji').textContent = item.emoji;
+  document.getElementById('cardHangul').textContent = item.kr;
+  document.getElementById('cardRom').textContent = item.rom;
+  document.getElementById('cardRom').style.display = 'none';
+  document.getElementById('cardHint').style.display = 'block';
+
+  var badgeHtml = item.hasBatchim ? '<span class="badge">받침 있음 ['+item.batchimGroup+']</span>' : '<span class="badge">받침 없음</span>';
+  document.getElementById('cardBadge').innerHTML = badgeHtml;
+
+  var meaningInput = document.getElementById('cardMeaning');
+  meaningInput.value = userMeanings[item.kr] || '';
+
+  var learnedChk = document.getElementById('cardLearned');
+  learnedChk.checked = learnedSet.has(item.kr);
+}
+
+document.querySelectorAll('.deck-filter').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.deck-filter').forEach(function(b){ b.setAttribute('aria-pressed', 'false'); });
+    btn.setAttribute('aria-pressed', 'true');
+    currentFilter = btn.dataset.filter;
+    updateDeck();
+  });
+});
+
+var flashcardEl = document.getElementById('flashcard');
+flashcardEl.onclick = function(){
+  var rom = document.getElementById('cardRom');
+  var hint = document.getElementById('cardHint');
+  if(rom.style.display === 'none'){
+    rom.style.display = 'block';
+    hint.style.display = 'none';
+  } else {
+    rom.style.display = 'none';
+    hint.style.display = 'block';
+  }
 };
 
-/* TAB 4: 쓰기 */
+document.getElementById('prevCard').onclick = function(){
+  if(filteredDeck.length === 0) return;
+  cardIndex = (cardIndex - 1 + filteredDeck.length) % filteredDeck.length;
+  renderCard();
+};
+document.getElementById('nextCard').onclick = function(){
+  if(filteredDeck.length === 0) return;
+  cardIndex = (cardIndex + 1) % filteredDeck.length;
+  renderCard();
+};
+document.getElementById('speakCard').onclick = function(){
+  if(filteredDeck.length > 0) speak(filteredDeck[cardIndex].kr);
+};
+
+document.getElementById('cardMeaning').oninput = function(e){
+  if(filteredDeck.length > 0) userMeanings[filteredDeck[cardIndex].kr] = e.target.value;
+};
+document.getElementById('cardLearned').onchange = function(e){
+  if(filteredDeck.length > 0){
+    var kr = filteredDeck[cardIndex].kr;
+    if(e.target.checked) learnedSet.add(kr);
+    else learnedSet.delete(kr);
+  }
+};
+
+document.getElementById('toWriting').onclick = function(){
+  if(filteredDeck.length > 0){
+    var kr = filteredDeck[cardIndex].kr;
+    setTargetText(kr);
+    document.querySelector('[data-tab="write"]').click();
+  }
+};
+
+updateDeck();
+
+/* TAB 4: 쓰기 연습장 (캔버스 & 가이드) */
 var writeSelect = document.getElementById('writeSelect');
-var opts = '<optgroup label="자음">';
-BASIC_CONS.concat(DOUBLE_CONS).forEach(function(c){ opts += '<option value="'+c+'">'+c+' ('+PHONETIC_MAP[c]+')</option>'; });
+var opts = '<optgroup label="단어">';
+CARD_DECK.forEach(function(d){ opts += '<option value="'+d.kr+'">'+d.kr+'</option>'; });
+opts += '</optgroup><optgroup label="자음">';
+BASIC_CONS.concat(DOUBLE_CONS).forEach(function(c){ opts += '<option value="'+c+'">'+c+'</option>'; });
 opts += '</optgroup><optgroup label="모음">';
-JUNG.forEach(function(v){ opts += '<option value="'+v+'">'+v+' ('+(PHONETIC_MAP[v]||v)+')</option>'; });
+JUNG.forEach(function(v){ opts += '<option value="'+v+'">'+v+'</option>'; });
 opts += '</optgroup>';
 writeSelect.innerHTML = opts;
-document.getElementById('speakWrite').onclick = function(){ speak(writeSelect.value); };
 
 var pad = document.getElementById('pad'), ctx = pad.getContext('2d'), drawing = false;
-pad.width = 300; pad.height = 300; ctx.lineWidth = 6; ctx.lineCap = 'round';
-function getPos(e){ var r = pad.getBoundingClientRect(), cx = e.touches ? e.touches[0].clientX : e.clientX, cy = e.touches ? e.touches[0].clientY : e.clientY; return { x: cx - r.left, y: cy - r.top }; }
-pad.onmousedown = pad.ontouchstart = function(e){ drawing = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
-pad.onmousemove = pad.ontouchmove = function(e){ if(drawing){ var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if(e.touches) e.preventDefault(); } };
+var currentColor = '#262220', currentSize = 7, showGuide = true;
+var currentTargetText = '책';
+
+function setTargetText(text){
+  currentTargetText = text;
+  redrawCanvas();
+}
+
+writeSelect.onchange = function(){ setTargetText(this.value); };
+document.getElementById('writeCustomBtn').onclick = function(){
+  var val = document.getElementById('writeCustom').value.trim();
+  if(val){ setTargetText(val); }
+};
+document.getElementById('speakWrite').onclick = function(){ speak(currentTargetText); };
+
+function redrawCanvas(){
+  ctx.clearRect(0, 0, pad.width, pad.height);
+  if(showGuide){
+    // 안내 격자선
+    ctx.strokeStyle = 'rgba(38,34,32,0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.width/2, 0); ctx.lineTo(pad.width/2, pad.height);
+    ctx.moveTo(0, pad.height/2); ctx.lineTo(pad.width, pad.height/2);
+    ctx.stroke();
+
+    // 흐린 따라쓰기 글씨
+    ctx.fillStyle = 'rgba(38,34,32,0.12)';
+    var fontSize = pad.width / Math.max(2, currentTargetText.length);
+    ctx.font = '500 ' + fontSize + 'px "Noto Sans KR", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentTargetText, pad.width/2, pad.height/2);
+  }
+}
+
+function getPos(e){
+  var r = pad.getBoundingClientRect();
+  var scaleX = pad.width / r.width;
+  var scaleY = pad.height / r.height;
+  var cx = e.touches ? e.touches[0].clientX : e.clientX;
+  var cy = e.touches ? e.touches[0].clientY : e.clientY;
+  return { x: (cx - r.left) * scaleX, y: (cy - r.top) * scaleY };
+}
+
+pad.onmousedown = pad.ontouchstart = function(e){
+  drawing = true;
+  var p = getPos(e);
+  ctx.beginPath();
+  ctx.strokeStyle = currentColor;
+  ctx.lineWidth = currentSize;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.moveTo(p.x, p.y);
+};
+
+pad.onmousemove = pad.ontouchmove = function(e){
+  if(drawing){
+    var p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    if(e.touches) e.preventDefault();
+  }
+};
+
 window.onmouseup = pad.ontouchend = function(){ drawing = false; };
-document.getElementById('clearPad').onclick = function(){ ctx.clearRect(0,0,300,300); };
+
+document.querySelectorAll('.swatch').forEach(function(s){
+  s.onclick = function(){
+    document.querySelectorAll('.swatch').forEach(function(sw){ sw.setAttribute('aria-pressed', 'false'); });
+    s.setAttribute('aria-pressed', 'true');
+    currentColor = s.dataset.color;
+  };
+});
+
+document.getElementById('penSize').oninput = function(){ currentSize = this.value; };
+document.getElementById('toggleGuide').onclick = function(){
+  showGuide = !showGuide;
+  this.textContent = showGuide ? '안내선 숨기기' : '안내선 보기';
+  redrawCanvas();
+};
+document.getElementById('clearPad').onclick = function(){ redrawCanvas(); };
+
+redrawCanvas();
 </script>
 </body>
 </html>
