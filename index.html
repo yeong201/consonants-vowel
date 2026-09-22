@@ -136,16 +136,22 @@
   .deck-count{ margin-left:auto; font-size:13px; color:var(--ink-soft); }
   .flashcard-stage{ display:flex; flex-direction:column; align-items:center; gap:14px; max-width:400px; margin:0 auto; }
   .flashcard{
-    width:100%; height:230px; background:var(--card); border:1px solid var(--line);
+    width:100%; height:260px; background:var(--card); border:1px solid var(--line);
     border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding:20px; text-align:center; cursor:pointer; position:relative; box-shadow:0 4px 12px rgba(0,0,0,0.03);
+    padding:16px; text-align:center; cursor:pointer; position:relative; box-shadow:0 4px 12px rgba(0,0,0,0.03);
   }
-  .emoji-lg{ font-size:42px; margin-bottom:6px; }
-  .hangul-xl{ font-size:36px; font-weight:500; color:var(--ink); margin-bottom:4px; }
-  .rom-reveal{ font-size:16px; color:var(--indigo); font-weight:500; }
-  .badge-row{ margin-top:6px; }
+  .card-media {
+    width: 90px; height: 90px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .card-media img {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid var(--line);
+  }
+  .emoji-lg{ font-size:52px; line-height: 1; }
+  .hangul-xl{ font-size:34px; font-weight:500; color:var(--ink); margin-bottom:2px; }
+  .rom-reveal{ font-size:15px; color:var(--indigo); font-weight:500; }
+  .badge-row{ margin-top:4px; }
   .badge{ font-size:11px; padding:2px 6px; border-radius:4px; background:var(--paper-deep); color:var(--ink-soft); }
-  .hint{ position:absolute; bottom:10px; font-size:11px; color:var(--ink-soft); opacity:0.7; }
+  .hint{ position:absolute; bottom:8px; font-size:11px; color:var(--ink-soft); opacity:0.7; }
 
   .card-controls{ display:flex; gap:16px; align-items:center; }
   .round-btn{ width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--indigo); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
@@ -309,7 +315,7 @@ function googleTranslateElementInit() {
 
     <div class="flashcard-stage">
       <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="카드를 눌러 로마자 표기 보기">
-        <div class="emoji-lg" id="cardEmoji">📖</div>
+        <div class="card-media" id="cardMedia">📖</div>
         <div class="hangul-xl" id="cardHangul">책</div>
         <div class="rom-reveal" id="cardRom" style="display:none;">chaek</div>
         <div class="badge-row" id="cardBadge"><span class="badge">받침 있음 [ㄱ]</span></div>
@@ -363,7 +369,7 @@ function googleTranslateElementInit() {
 </main>
 
 <script>
-/* --- TTS 발음 제어 --- */
+/* --- 개선된 구글 번역 연동 TTS 발음 제어 --- */
 var PHONETIC_MAP = {
   'ㄱ':'그', 'ㄴ':'느', 'ㄷ':'드', 'ㄹ':'르', 'ㅁ':'므', 'ㅂ':'브', 'ㅅ':'스',
   'ㅇ':'응', 'ㅈ':'즈', 'ㅊ':'츠', 'ㅋ':'크', 'ㅌ':'트', 'ㅍ':'프', 'ㅎ':'흐',
@@ -373,23 +379,41 @@ var PHONETIC_MAP = {
   'ㅒ':'얘', 'ㅖ':'예', 'ㅘ':'와', 'ㅙ':'왜', 'ㅚ':'외', 'ㅝ':'워', 'ㅞ':'웨', 'ㅟ':'위', 'ㅢ':'의'
 };
 
-function speak(text){
-  if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
+var currentAudio = null;
+
+function speak(text) {
   var soundText = PHONETIC_MAP[text] || text;
-  var u = new SpeechSynthesisUtterance(soundText);
-  u.lang = 'ko-KR';
-  u.rate = 0.65;
-  u.pitch = 1.0;
-  window.speechSynthesis.speak(u);
+  
+  // 이전 재생 중인 오디오 정지
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+
+  // 구글 번역 TTS API 이용
+  var googleTtsUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(soundText) + '&tl=ko&client=tw-ob';
+  
+  var audio = new Audio(googleTtsUrl);
+  currentAudio = audio;
+
+  audio.play().catch(function(e) {
+    // 구글 오디오 재생이 차단되거나 실패한 경우, 웹 표준 SpeechSynthesis로 대체
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(soundText);
+      u.lang = 'ko-KR';
+      u.rate = 0.7;
+      window.speechSynthesis.speak(u);
+    }
+  });
 }
 
-/* --- 데이터 세트 (모든 추가 단어 통합) --- */
+/* --- 데이터 세트 (이미지 URL 속성 img 추가 가능) --- */
 var CHO = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 var JUNG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 
 var CARD_DECK = [
-  /* 받침 없음 */
+  /* 받침 없음 (샘플 이미지 적용예시) */
   {kr:'고기', rom:'go-gi', emoji:'🥩', hasBatchim:false, meanings:['meat', 'thịt']},
   {kr:'구두', rom:'gu-du', emoji:'👞', hasBatchim:false, meanings:['shoes', 'giày tây']},
   {kr:'기차', rom:'gi-cha', emoji:'🚂', hasBatchim:false, meanings:['train', 'tàu hỏa']},
@@ -398,29 +422,29 @@ var CARD_DECK = [
   {kr:'누나', rom:'nu-na', emoji:'👩', hasBatchim:false, meanings:['older sister', 'chị']},
   {kr:'다리', rom:'da-ri', emoji:'🦵', hasBatchim:false, meanings:['leg', 'bridge', 'chân', 'cầu']},
   {kr:'대나무', rom:'dae-na-mu', emoji:'🎋', hasBatchim:false, meanings:['bamboo', 'cây tre']},
-  {kr:'두더지', rom:'du-deo-ji', emoji:'🦡', hasBatchim:false, meanings:['mole', 'con chuột chũi']},
+  {kr:'두더지', rom:'du-deo-ji', emoji:'🦡', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxzQGumCmlF8CGvTfSgN6YZLs-Kc2gBYtanJs3WEv9A&s=10', hasBatchim:false, meanings:['mole', 'con chuột chũi']},
   {kr:'라디오', rom:'ra-di-o', emoji:'📻', hasBatchim:false, meanings:['radio', 'đài radio']},
-  {kr:'로마', rom:'ro-ma', emoji:'🏛️', hasBatchim:false, meanings:['rome', 'ro-ma']},
-  {kr:'레이스', rom:'re-i-seu', emoji:'🧶', hasBatchim:false, meanings:['lace', 'ren']},
+  {kr:'로마', rom:'ro-ma', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTxzQGumCmlF8CGvTfSgN6YZLs-Kc2gBYtanJs3WEv9A&s=10', hasBatchim:false, meanings:['rome', 'ro-ma']},
+  {kr:'레이스', rom:'re-i-seu', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZYlx5X7f15MQFmxqiuZVc5g59m0FlqghYn2sGkEoDqQ&s=10', hasBatchim:false, meanings:['lace', 'ren']},
   {kr:'모기', rom:'mo-gi', emoji:'🦟', hasBatchim:false, meanings:['mosquito', 'con muỗi']},
   {kr:'머리', rom:'meo-ri', emoji:'🗣️', hasBatchim:false, meanings:['head', 'hair', 'đầu', 'tóc']},
-  {kr:'마차', rom:'ma-cha', emoji:'🐴', hasBatchim:false, meanings:['carriage', 'xe ngựa']},
-  {kr:'바나나', rom:'ba-na-na', emoji:'🍌', hasBatchim:false, meanings:['banana', 'quả chuối']},
+  {kr:'마차', rom:'ma-cha', img:'https://www.shutterstock.com/image-vector/horse-cart-coachman-driving-vector-260nw-1826678939.jpg', hasBatchim:false, meanings:['carriage', 'xe ngựa']},
+  {kr:'바나나', rom:'ba-na-na', emoji:'🍌', img:'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=300&q=80', hasBatchim:false, meanings:['banana', 'quả chuối']},
   {kr:'버스', rom:'beo-seub', emoji:'🚌', hasBatchim:false, meanings:['bus', 'xe buýt']},
   {kr:'부채', rom:'bu-chae', emoji:'🪭', hasBatchim:false, meanings:['fan', 'cái quạt']},
-  {kr:'사과', rom:'sa-gwa', emoji:'🍎', hasBatchim:false, meanings:['apple', 'quả táo']},
+  {kr:'사과', rom:'sa-gwa', emoji:'🍎', img:'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=300&q=80', hasBatchim:false, meanings:['apple', 'quả táo']},
   {kr:'스파게티', rom:'seu-pa-ge-ti', emoji:'🍝', hasBatchim:false, meanings:['spaghetti', 'mì ý']},
   {kr:'시계', rom:'si-gye', emoji:'🕐', hasBatchim:false, meanings:['clock', 'watch', 'đồng hồ']},
   {kr:'주스', rom:'ju-seu', emoji:'🧃', hasBatchim:false, meanings:['juice', 'nước ép']},
   {kr:'조개', rom:'jo-gae', emoji:'🦪', hasBatchim:false, meanings:['clam', 'shell', 'con nghêu']},
-  {kr:'지우개', rom:'ji-u-gae', emoji:'🧹', hasBatchim:false, meanings:['eraser', 'cục tẩy']},
+  {kr:'지우개', rom:'ji-u-gae', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuHKyUQc6gLK6F9IqypsA3dHSOhrIbrMle-rym1SPTTQ&s=10', hasBatchim:false, meanings:['eraser', 'cục tẩy']},
   {kr:'차', rom:'cha', emoji:'🍵', hasBatchim:false, meanings:['tea', 'car', 'trà', 'xe ô tô']},
   {kr:'채소', rom:'chae-so', emoji:'🥬', hasBatchim:false, meanings:['vegetables', 'rau củ']},
   {kr:'치즈', rom:'chi-jeu', emoji:'🧀', hasBatchim:false, meanings:['cheese', 'phô mai']},
   {kr:'카메라', rom:'ka-me-ra', emoji:'📷', hasBatchim:false, meanings:['camera', 'máy ảnh']},
-  {kr:'커피', rom:'keo-pi', emoji:'☕', hasBatchim:false, meanings:['coffee', 'cà phê']},
+  {kr:'커피', rom:'keo-pi', emoji:'☕', img:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80', hasBatchim:false, meanings:['coffee', 'cà phê']},
   {kr:'크리스마스', rom:'keu-ri-seu-ma-seu', emoji:'🎄', hasBatchim:false, meanings:['christmas', 'giáng sinh']},
-  {kr:'타조', rom:'ta-jo', emoji:'🦩', hasBatchim:false, meanings:['ostrich', 'đà điểu']},
+  {kr:'타조', rom:'ta-jo', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSip6RVQIS5zPZC30rSp5mr7g0qtRSdzq35hWmkvyYX_g&s=10', hasBatchim:false, meanings:['ostrich', 'đà điểu']},
   {kr:'토마토', rom:'to-ma-to', emoji:'🍅', hasBatchim:false, meanings:['tomato', 'cà chua']},
   {kr:'티셔츠', rom:'ti-syeo-cheu', emoji:'👕', hasBatchim:false, meanings:['t-shirt', 'áo phông']},
   {kr:'파도', rom:'pa-do', emoji:'🌊', hasBatchim:false, meanings:['wave', 'sóng biển']},
@@ -430,7 +454,7 @@ var CARD_DECK = [
   {kr:'호수', rom:'ho-su', emoji:'🏞️', hasBatchim:false, meanings:['lake', 'hồ nước']},
   {kr:'허리', rom:'heo-ri', emoji:'🧍', hasBatchim:false, meanings:['waist', 'eo', 'thắt lưng']},
   {kr:'오디오', rom:'o-di-o', emoji:'📻', hasBatchim:false, meanings:['audio', 'âm thanh']},
-  {kr:'나이', rom:'na-i', emoji:'🎂', hasBatchim:false, meanings:['age', 'tuổi']},
+  {kr:'나이', rom:'na-i', img:'https://www.urbanbrush.net/web/wp-content/uploads/edd/2019/04/urbanbrush-20190404120948793749-548x581.png', hasBatchim:false, meanings:['age', 'tuổi']},
   {kr:'소리', rom:'so-ri', emoji:'🔊', hasBatchim:false, meanings:['sound', 'âm thanh']},
   {kr:'모자', rom:'mo-ja', emoji:'🧢', hasBatchim:false, meanings:['hat', 'mũ']},
   {kr:'바지', rom:'ba-ji', emoji:'👖', hasBatchim:false, meanings:['pants', 'quần']},
@@ -444,10 +468,10 @@ var CARD_DECK = [
   {kr:'카드', rom:'ka-deu', emoji:'💳', hasBatchim:false, meanings:['card', 'thẻ']},
   {kr:'코', rom:'ko', emoji:'👃', hasBatchim:false, meanings:['nose', 'mũi']},
   {kr:'개', rom:'gae', emoji:'🐕', hasBatchim:false, meanings:['dog', 'con chó']},
-  {kr:'캐나다', rom:'kae-na-da', emoji:'🇨🇦', hasBatchim:false, meanings:['canada', 'ca-na-da']},
+  {kr:'캐나다', rom:'kae-na-da', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXOs8CHhfogYH-oRXmz19Q2W--LQ4Bf5nJaHacS55swg&s=10', hasBatchim:false, meanings:['canada', 'ca-na-da']},
   {kr:'파리', rom:'pa-ri', emoji:'🪰', hasBatchim:false, meanings:['fly', 'paris', 'con ruồi']},
   {kr:'게', rom:'ge', emoji:'🦀', hasBatchim:false, meanings:['crab', 'con cua']},
-  {kr:'꼬리', rom:'kko-ri', emoji:'🐕‍🦺', hasBatchim:false, meanings:['tail', 'cái đuôi']},
+  {kr:'꼬리', rom:'kko-ri', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxEtiiW4Ztcoyygkx2LOPWlxjc6Zhpr6y4qpj02uQ7AQ&s=10', hasBatchim:false, meanings:['tail', 'cái đuôi']},
   {kr:'띠', rom:'tti', emoji:'🎗️', hasBatchim:false, meanings:['belt', 'zodiac', 'đai']},
   {kr:'아빠', rom:'a-ppa', emoji:'👨', hasBatchim:false, meanings:['dad', 'bố']},
   {kr:'아저씨', rom:'a-jeo-ssi', emoji:'👨‍💼', hasBatchim:false, meanings:['middle-aged man', 'chú']},
@@ -474,41 +498,41 @@ var CARD_DECK = [
   {kr:'돋보기', rom:'dot-bo-gi', emoji:'🔍', hasBatchim:true, batchimGroup:'ㄷ', meanings:['magnifying glass', 'kính lúp']},
   {kr:'옷', rom:'ot', emoji:'👕', hasBatchim:true, batchimGroup:'ㄷ', meanings:['clothes', 'áo quần']},
   {kr:'낮', rom:'nat', emoji:'☀️', hasBatchim:true, batchimGroup:'ㄷ', meanings:['daytime', 'ban ngày']},
-  {kr:'꽃', rom:'kkot', emoji:'🌸', hasBatchim:true, batchimGroup:'ㄷ', meanings:['flower', 'bông hoa']},
+  {kr:'꽃', rom:'kkot', emoji:'🌸', img:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=300&q=80', hasBatchim:true, batchimGroup:'ㄷ', meanings:['flower', 'bông hoa']},
   {kr:'빗', rom:'bit', emoji:'🪮', hasBatchim:true, batchimGroup:'ㄷ', meanings:['comb', 'cái lược']},
   {kr:'밭', rom:'bat', emoji:'🌱', hasBatchim:true, batchimGroup:'ㄷ', meanings:['field', 'cánh đồng']},
   {kr:'말', rom:'mal', emoji:'🐴', hasBatchim:true, batchimGroup:'ㄹ', meanings:['horse', 'speech', 'con ngựa', 'lời nói']},
   {kr:'달', rom:'dal', emoji:'🌙', hasBatchim:true, batchimGroup:'ㄹ', meanings:['moon', 'mặt trăng']},
   {kr:'불', rom:'bul', emoji:'🔥', hasBatchim:true, batchimGroup:'ㄹ', meanings:['fire', 'lửa']},
   {kr:'곰', rom:'gom', emoji:'🐻', hasBatchim:true, batchimGroup:'ㅁ', meanings:['bear', 'con gấu']},
-  {kr:'김치', rom:'gim-chi', emoji:'🥬', hasBatchim:true, batchimGroup:'ㅁ', meanings:['kimchi', 'kim chi']},
+  {kr:'김치', rom:'gim-chi', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtSrqYt-OLdsllngUk_wqkAAArrg6rTJmydoDUJjmDXg&s=10', hasBatchim:true, batchimGroup:'ㅁ', meanings:['kimchi', 'kim chi']},
   {kr:'이름', rom:'i-reum', emoji:'📛', hasBatchim:true, batchimGroup:'ㅁ', meanings:['name', 'tên']},
   {kr:'잎', rom:'ip', emoji:'🍃', hasBatchim:true, batchimGroup:'ㅂ', meanings:['leaf', 'lá cây']},
   {kr:'집', rom:'jip', emoji:'🏠', hasBatchim:true, batchimGroup:'ㅂ', meanings:['house', 'nhà']},
   {kr:'가방', rom:'ga-bang', emoji:'🎒', hasBatchim:true, batchimGroup:'ㅇ', meanings:['bag', 'cặp sách']},
   {kr:'공', rom:'gong', emoji:'⚽', hasBatchim:true, batchimGroup:'ㅇ', meanings:['ball', 'quả bóng']},
   {kr:'강', rom:'gang', emoji:'🌊', hasBatchim:true, batchimGroup:'ㅇ', meanings:['river', 'con sông']},
-  {kr:'김밥', rom:'gim-bap', emoji:'🍙', hasBatchim:true, batchimGroup:'ㅂ', meanings:['gimbap', 'cơm cuộn']},
+  {kr:'김밥', rom:'gim-bap', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjAoq2kq30hYqkeS0d-uD2ts48MUmQN0tAbcPz4-Ar9Q&s=10', hasBatchim:true, batchimGroup:'ㅂ', meanings:['gimbap', 'cơm cuộn']},
   {kr:'뉴욕', rom:'nyu-yok', emoji:'🗽', hasBatchim:true, batchimGroup:'ㄱ', meanings:['new york', 'new york']},
   {kr:'책상', rom:'chaek-sang', emoji:'🛋️', hasBatchim:true, batchimGroup:'ㅇ', meanings:['desk', 'bàn học']},
   {kr:'골프', rom:'gol-peu', emoji:'⛳', hasBatchim:true, batchimGroup:'ㄹ', meanings:['golf', 'môn đánh golf']},
   {kr:'연필', rom:'yeon-pil', emoji:'✏️', hasBatchim:true, batchimGroup:'ㄹ', meanings:['pencil', 'bút chibi']},
-  {kr:'사전', rom:'sa-jeon', emoji:'📖', hasBatchim:true, batchimGroup:'ㄴ', meanings:['dictionary', 'từ điển']},
+  {kr:'사전', rom:'sa-jeon', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1pYDuGjW2UceSVCyJugakdpxan8uQ-Acv35JChu-eaw&s=10', hasBatchim:true, batchimGroup:'ㄴ', meanings:['dictionary', 'từ điển']},
   {kr:'바이올린', rom:'ba-i-ol-rin', emoji:'🎻', hasBatchim:true, batchimGroup:'ㄴ', meanings:['violin', 'đàn vĩ cầm']},
-  {kr:'런던', rom:'reon-deon', emoji:'🇬🇧', hasBatchim:true, batchimGroup:'ㄴ', meanings:['london', 'luân đôn']},
+  {kr:'런던', rom:'reon-deon', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBJC0tPtxwXivpJULpJehDY8zIkCHoi6hpgXA54nAtqQ&s=10', hasBatchim:true, batchimGroup:'ㄴ', meanings:['london', 'luân đôn']},
   {kr:'햄버거', rom:'haem-beob-geo', emoji:'🍔', hasBatchim:true, batchimGroup:'ㅁ', meanings:['hamburger', 'bánh kẹp']},
   {kr:'사탕', rom:'sa-tang', emoji:'🍬', hasBatchim:true, batchimGroup:'ㅇ', meanings:['candy', 'kẹo']},
   {kr:'콜라', rom:'kol-ra', emoji:'🥤', hasBatchim:true, batchimGroup:'ㄹ', meanings:['cola', 'cốc coca']},
-  {kr:'전기밥솥', rom:'jeon-gi-bap-sot', emoji:'🍚', hasBatchim:true, batchimGroup:'ㄷ', meanings:['rice cooker', 'nồi cơm điện']},
+  {kr:'전기밥솥', rom:'jeon-gi-bap-sot', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdkZ5HAiixP8fzQ9sbt--5hefewioAdLzB6zdtyi0cYQ&s', hasBatchim:true, batchimGroup:'ㄷ', meanings:['rice cooker', 'nồi cơm điện']},
   {kr:'우산', rom:'u-san', emoji:'☂️', hasBatchim:true, batchimGroup:'ㄴ', meanings:['umbrella', 'cây ô']},
   {kr:'침대', rom:'chim-dae', emoji:'🛏️', hasBatchim:true, batchimGroup:'ㅁ', meanings:['bed', 'giường ngủ']},
-  {kr:'레스토랑', rom:'re-seu-to-rang', emoji:'🍽️', hasBatchim:true, batchimGroup:'ㅇ', meanings:['restaurant', 'nhà hàng']},
+  {kr:'레스토랑', rom:'re-seu-to-rang', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJhZeo3qkc5op61WsNFQ1poN3RwaN_IeP40tmQDFd22Q&s=10', hasBatchim:true, batchimGroup:'ㅇ', meanings:['restaurant', 'nhà hàng']},
   {kr:'컴퓨터', rom:'keom-pyu-teo', emoji:'💻', hasBatchim:true, batchimGroup:'ㅁ', meanings:['computer', 'máy tính']},
   {kr:'펭귄', rom:'peng-gwin', emoji:'🐧', hasBatchim:true, batchimGroup:'ㄴ', meanings:['penguin', 'chim cánh cụt']},
   {kr:'선생님', rom:'seon-saeng-nim', emoji:'👩‍🏫', hasBatchim:true, batchimGroup:'ㅁ', meanings:['teacher', 'giáo viên']},
   {kr:'비행기', rom:'bi-haeng-gi', emoji:'✈️', hasBatchim:true, batchimGroup:'ㅇ', meanings:['airplane', 'máy bay']},
-  {kr:'딸기', rom:'ttal-gi', emoji:'🍓', hasBatchim:true, batchimGroup:'ㄹ', meanings:['strawberry', 'quả dâu tây']},
-  {kr:'책', rom:'chaek', emoji:'📖', hasBatchim:true, batchimGroup:'ㄱ', meanings:['book', 'sách']},
+  {kr:'딸기', rom:'ttal-gi', emoji:'🍓', img:'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=300&q=80', hasBatchim:true, batchimGroup:'ㄹ', meanings:['strawberry', 'quả dâu tây']},
+  {kr:'책', rom:'chaek', emoji:'📖', img:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=300&q=80', hasBatchim:true, batchimGroup:'ㄱ', meanings:['book', 'sách']},
   {kr:'볼링', rom:'bol-ring', emoji:'🎳', hasBatchim:true, batchimGroup:'ㅇ', meanings:['bowling', 'môn bowling']},
   {kr:'공책', rom:'gong-chaek', emoji:'📓', hasBatchim:true, batchimGroup:'ㄱ', meanings:['notebook', 'vở ghi']},
   {kr:'아이스크림', rom:'a-i-seu-keu-rim', emoji:'🍦', hasBatchim:true, batchimGroup:'ㅁ', meanings:['ice cream', 'kem']},
@@ -616,7 +640,7 @@ window.checkMeaning = function(idx){
 };
 renderBatchimList();
 
-/* TAB 3: 플래시 카드 제어 */
+/* TAB 3: 플래시 카드 제어 (이미지 우선 렌더링) */
 var currentFilter = 'all';
 var filteredDeck = CARD_DECK.slice();
 var cardIndex = 0;
@@ -640,7 +664,15 @@ function renderCard(){
   }
   countEl.textContent = (cardIndex + 1) + ' / ' + filteredDeck.length;
   var item = filteredDeck[cardIndex];
-  document.getElementById('cardEmoji').textContent = item.emoji;
+
+  // 이미지 사용 가능시 이미지, 없으면 이모지 출력
+  var mediaEl = document.getElementById('cardMedia');
+  if(item.img){
+    mediaEl.innerHTML = '<img src="' + item.img + '" alt="' + item.kr + '">';
+  } else {
+    mediaEl.innerHTML = '<div class="emoji-lg">' + (item.emoji || '📖') + '</div>';
+  }
+
   document.getElementById('cardHangul').textContent = item.kr;
   document.getElementById('cardRom').textContent = item.rom;
   document.getElementById('cardRom').style.display = 'none';
@@ -713,7 +745,7 @@ document.getElementById('toWriting').onclick = function(){
 
 updateDeck();
 
-/* TAB 4: 쓰기 연습장 (모든 단어 선택 지원) */
+/* TAB 4: 쓰기 연습장 */
 var writeSelect = document.getElementById('writeSelect');
 var opts = '<optgroup label="단어">';
 CARD_DECK.forEach(function(d){ opts += '<option value="'+d.kr+'">'+d.kr+'</option>'; });
